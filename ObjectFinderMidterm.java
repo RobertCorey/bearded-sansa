@@ -14,7 +14,7 @@ class ObjectFinderMidterm extends Quagent {
     private Events events;
 	public static int DIST = 500;
 	private static int CORNER_DISTANCE = 20;
-	private static int DISTANCE_STRAIGHT_TO_WALL = 80;
+	private static int DISTANCE_STRAIGHT_TO_WALL = 26;
 	private int turnAngle = 0;
 	private Boolean corner = false;
 	private int numOfObjects = 8;
@@ -44,10 +44,10 @@ class ObjectFinderMidterm extends Quagent {
 					
 					//Shoot out rays
 					this.rays(4);
-					this.pickup("tofu");
+					// this.pickup("tofu");
 					//Shoot out a radius
 					// this.radius(60);
-					
+					handleEvents(this.events());
 					//Handle Stopped
 					//handleStopped(this.events());
 					
@@ -85,93 +85,6 @@ class ObjectFinderMidterm extends Quagent {
 			}
 		}
 	}
-	//Public function to handle the stopped event
-    public void handleStopped(Events events) throws Exception {
-	
-		// get the individual events from the event object
-		for (int ix = 0; ix < events.size(); ix++) {
-			
-			//Events object
-			String e = events.eventAt(ix);
-		
-			//Once a stopped event is detected
-			if (e.indexOf("STOPPED") >= 0) {
-				if(direction){
-					
-					//Turn 90
-					this.turn(90);
-				
-					//Walk a small distance
-					this.walk(50);
-					
-					//Sleep to let the quagent walk
-					Thread.currentThread().sleep(800);
-					
-					//Turn another 90
-					this.turn(90);
-					
-					//Set direction to false
-					direction = false;
-					
-				}
-				else{
-				
-					//Turn 90
-					this.turn(90);
-				
-					//Walk a small distance
-					this.walk(50);
-					
-					//Sleep to let the quagent walk
-					Thread.currentThread().sleep(800);
-					
-					//Turn another 90
-					this.turn(90);
-					
-					//Set direction to true
-					direction = true;
-				
-				}
-			}
-		}
-    }
-	
-	//Public function to handle the stopped event
-    public void handleRadius(Events events) throws Exception {
-	
-		// get the individual events from the event object
-		for (int ix = 0; ix < events.size(); ix++) {
-			
-			//Events object
-			String e = events.eventAt(ix);
-		
-			//Once a stopped event is detected
-			if (e.indexOf("radius") >= 0) {
-				
-				String[] tokens = e.split("[()\\s]+");
-				
-				int numOfObjects = Integer.parseInt(tokens[4]);
-				
-				if (numOfObjects > 0){
-				
-					this.stand();
-				
-					//Pick up the object
-					this.pickup("tofu");
-					
-					//Pause the quagent
-					Thread.currentThread().sleep(500);
-					
-					//Add one to objects picked up
-					objectsFound++;
-					
-					System.out.println("Object " + objectsFound + " found!");
-				
-				}
-				
-			}
-		}
-    }
 	
 	//Public function to handle the rays events
 	public void handleRays(String eventString) throws Exception {
@@ -296,72 +209,7 @@ class ObjectFinderMidterm extends Quagent {
 			}
 		}
 	}
-	
-	private void findAngle(double x, double y){
-		
-		Double angle = 0.0;
-		
-		if (turnAngle == 0){
-		
-			//Calculate the angle 
-			angle = Math.toDegrees(Math.atan2(y,x));
-			
-			turnAngle = angle.intValue();
-			
-			System.out.println("Angle: " + turnAngle);
-		
-		}
-	}
-	
-	public double findDistance (double x, double y){
-		return Math.sqrt(x*x + y*y);
-	}
-	
-	/*private void navigate(double x, double y, Events events) throws Exception {
-	
-		findAngle(x, y);
-		
-		Boolean found = false;
-		
-		this.turn(turnAngle);
-		
-		this.pickup("tofu");
-		
-		/*while(!found){
-		
-			this.walk(10);
-			this.pickup("tofu");
-			
-			// get the individual events from the event object
-			for (int ix = 0; ix < events.size(); ix++) {
-			
-				//Events object
-				String e = events.eventAt(ix);
-			
-				//get pick up message
-				if (e.indexOf("pickup") >= 0) {
-								
-					printEvents(this.events());
-					
-					//Set found to true
-					found = true;
-				
-				}
-			}
-		}
-	}*/
-	
-	//Private function to turn
-	private void turn() throws Exception {
-					
-		//Local variable for turn radius
-		int turn = (int)(Math.random()*180.0 - 90.0);
-			
-		//Turn
-		this.turn(turn);
-		
-	}
-	
+
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
 		
@@ -377,72 +225,3 @@ class ObjectFinderMidterm extends Quagent {
 		}
     }
 }
-
-/*if (numOfObjects > 0){
-				
-					//Make the quagent stand
-					this.stand();
-			
-					//set pickup to false
-					Boolean pickup = false;
-					
-					//Grab the first object's coordinates
-					Double x = Double.parseDouble(tokens[6]);
-					Double y = Double.parseDouble(tokens[7]);
-					
-					System.out.println("Object found!");
-					
-					//Find angle
-					findAngle(x, y);
-					
-					//Turn the quagent
-					this.turn(turnAngle);
-					
-					//Thread.currentThread().sleep(500);
-					
-					//Calculate distance to object
-					double walkingDistance = findDistance(x,y);
-					
-					//Calculate distance to object
-					double distanceToObject = findDistance(x,y);
-					
-					System.out.println("Walking distance: " + walkingDistance);
-					
-					while (!pickup){
-						
-						//Calculate distance to object
-						//double walkingDistance = findDistance(x,y);
-						
-						//System.out.println("Walking distance: " + walkingDistance);
-						
-						//Walk that distance
-						if(distanceToObject > DIST){
-							this.walk(100);
-							Thread.currentThread().sleep(100);
-							this.pickup("tofu");
-							
-							//Set turnAngle to zero
-							turnAngle = 0;
-							
-							Thread.currentThread().sleep(1000);
-							
-							pickup = true;
-							
-						}
-						else{
-							this.pickup("tofu");
-							
-							Thread.currentThread().sleep(1000);
-							
-							pickup = true;
-						
-						}
-						
-						//Sleep thread for a very long time
-						Thread.currentThread().sleep(1000);
-					}
-				}
-				else{
-					System.out.println("Object not found!");
-					turn();
-				}*/
