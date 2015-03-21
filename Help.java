@@ -15,6 +15,7 @@ class Help extends Quagent {
 		super();
 		String stage = "wallhugger";
 		int ticks = 0;
+		EventHandler oldEh = null;
 
 		try {
 			while(true) {
@@ -32,12 +33,29 @@ class Help extends Quagent {
 					this.pickup("tofu");
 					this.rays(4);
 				}
+				//turn left sometimes
+				if (stage == "wallhugger") {
+					if (oldEh != null) {
+						System.out.println(eh.dLeft);
+						System.out.println(oldEh.dLeft);
+						System.out.println("\n\n");
+						double diff = Math.abs(eh.dLeft - oldEh.dLeft);
+						if (diff > 200) {
+							this.turn(90);
+							stage = "walk";
+						}
+					}
+				}
 				//execute chosen strategy
 				switch (stage) {
 					case "wallhugger":
 						wallhugger(eh);
 						break;
+					case "walk":
+						this.checkItOut(eh);
+						break;
 				}
+				oldEh = eh;
 				// Thread.currentThread().sleep(200);
 			}
 		}	 
@@ -68,6 +86,14 @@ class Help extends Quagent {
 		}
 	}
 
+	private void checkItOut(EventHandler eh) throws Exception {
+		if (eh.stopped) {
+			this.turn(180);
+		} else {
+			this.walk(30);
+		}
+	}
+
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
 		
@@ -85,7 +111,6 @@ class Help extends Quagent {
 		    	// printEvents(events);
 		    	for (int i = 0; i < events.length; i++) {
 					String current = events[i];
-		    		System.out.println(current);
 		    		if (current.indexOf("rays") >= 0) {
 		    			parseRays(current);
 		    			rayResponse = true;
