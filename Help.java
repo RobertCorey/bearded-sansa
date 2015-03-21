@@ -15,7 +15,7 @@ class Help extends Quagent {
 		super();
 		String stage = "wallhugger";
 		int ticks = 0;
-		Boolean firstStop = false;
+		
 		try {
 			while(true) {
 				ticks += 1;
@@ -24,7 +24,7 @@ class Help extends Quagent {
 				if (ticks % 4 == 0) {
 					this.pickup("tofu");
 					this.rays(4);
-					continue;
+					// continue;
 				}
 
 				String[] eventStrings = new String[events.size()];
@@ -32,7 +32,9 @@ class Help extends Quagent {
 					eventStrings[i] = events.eventAt(i);
 				}
 				EventHandler eh = new EventHandler(eventStrings);
-				
+				double area = 0;
+				double arr[] = eh.objectDistance;
+
 				switch (stage) {
 					case "wallhugger":
 						wallhugger(eh);
@@ -66,28 +68,6 @@ class Help extends Quagent {
 		} else {
 			this.walk(30);
 		}
-	}
-
-	private Boolean dartout(EventHandler eh) throws Exception {
-		if (eh.stopped == true) {
-			this.turn(180);
-			this.walk(30);
-			return true;
-		} else {
-			this.walk(30);
-		}
-		return false;
-	}
-
-	private Boolean dartin(EventHandler eh) throws Exception {
-		if (eh.stopped == true) {
-			this.turn(90);
-			this.walk(30);
-			return true;
-		} else {
-			this.walk(30);
-		}
-		return false;
 	}
 
 	//Private function for death of quagent once all objects are found
