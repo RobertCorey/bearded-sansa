@@ -13,10 +13,33 @@ class Help extends Quagent {
 
     Help () throws Exception {
 		super();
-		
+		String stage = "wallhugger";
+		int ticks = 0;
 		try {
 			while(true) {
+				ticks += 1;
 				events = this.events();
+				//limit exspensive operations
+				if (ticks % 12 == 0) {
+					this.rays(4);
+					continue;
+				}
+				if (ticks % 7 == 0) {
+					this.pickup("tofu");
+					continue;
+				}
+
+				String[] eventStrings = new String[events.size()];
+				for (int i = 0; i < events.size(); i++) {
+					eventStrings[i] = events.eventAt(i);
+				}
+				EventHandler eh = new EventHandler(eventStrings);
+				switch (stage) {
+					case "wallhugger":
+						wallhugger(eh);
+						break;
+				}
+				Thread.currentThread().sleep(200);
 			}
 		}	 
 		catch (QDiedException e) { // the quagent died -- catch that exception
@@ -33,22 +56,19 @@ class Help extends Quagent {
 	 * Each case has their own private function to take care
 	 * of the function of the state.	
 	*/
+	private void wallhugger(EventHandler eh) throws Exception {
+		if (eh.stopped == true) {
+			this.turn(90);
+		} else {
+			this.walk(30);
+		}
+	}
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
 		
 		//Kill the quagent
 		this.close();
 	} 
-	public void convertEvents(Events events) {
-		
-	}
-	//Function to print out events (for testing)
-    public void printEvents(Events events) {
-		System.out.println("List of Events:");
-		for (int ix = 0; ix < events.size(); ix++) {
-			System.out.println(events.eventAt(ix));
-		}
-    }
 
     class EventHandler {
 		double[] objectDistance = new double[3];
