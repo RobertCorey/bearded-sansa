@@ -15,17 +15,15 @@ class Help extends Quagent {
 		super();
 		String stage = "wallhugger";
 		int ticks = 0;
+		Boolean firstStop = false;
 		try {
 			while(true) {
 				ticks += 1;
 				events = this.events();
 				//limit exspensive operations
-				if (ticks % 12 == 0) {
-					this.rays(4);
-					continue;
-				}
-				if (ticks % 7 == 0) {
+				if (ticks % 4 == 0) {
 					this.pickup("tofu");
+					this.rays(4);
 					continue;
 				}
 
@@ -34,12 +32,13 @@ class Help extends Quagent {
 					eventStrings[i] = events.eventAt(i);
 				}
 				EventHandler eh = new EventHandler(eventStrings);
+				
 				switch (stage) {
 					case "wallhugger":
 						wallhugger(eh);
 						break;
 				}
-				Thread.currentThread().sleep(200);
+				// Thread.currentThread().sleep(200);
 			}
 		}	 
 		catch (QDiedException e) { // the quagent died -- catch that exception
@@ -57,12 +56,40 @@ class Help extends Quagent {
 	 * of the function of the state.	
 	*/
 	private void wallhugger(EventHandler eh) throws Exception {
+		if (eh.objectDistance[2] > 100) {
+			this.turn(-90);
+			this.walk(30);
+		}
 		if (eh.stopped == true) {
 			this.turn(90);
+			this.walk(30);
 		} else {
 			this.walk(30);
 		}
 	}
+
+	private Boolean dartout(EventHandler eh) throws Exception {
+		if (eh.stopped == true) {
+			this.turn(180);
+			this.walk(30);
+			return true;
+		} else {
+			this.walk(30);
+		}
+		return false;
+	}
+
+	private Boolean dartin(EventHandler eh) throws Exception {
+		if (eh.stopped == true) {
+			this.turn(90);
+			this.walk(30);
+			return true;
+		} else {
+			this.walk(30);
+		}
+		return false;
+	}
+
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
 		
@@ -71,7 +98,7 @@ class Help extends Quagent {
 	} 
 
     class EventHandler {
-		double[] objectDistance = new double[3];
+		double[] objectDistance = {-1, -1, -1};
 		Boolean stopped = false;
 
 		public EventHandler(String[] events) {
@@ -83,7 +110,7 @@ class Help extends Quagent {
 		    		if (current.indexOf("rays") >= 0) {
 		    			objectDistance = parseRays(current);
 		    		}
-		    		else if (current.indexOf("STOPPED") >= 0) {
+		    		else if (current.indexOf("TELL STOPPED 0.00") >= 0) {
 		    			stopped = true;
 		    		}
 		    		else if (current.indexOf("foo") >= 0) {
