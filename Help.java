@@ -78,6 +78,7 @@ class Help extends Quagent {
     class EventHandler {
 		double dStraight, dLeft, dRight, dBehind, dArea;
 		Boolean stopped = false;
+		Boolean rayResponse = false;
 
 		public EventHandler(String[] events) {
 			try {
@@ -87,6 +88,7 @@ class Help extends Quagent {
 		    		System.out.println(current);
 		    		if (current.indexOf("rays") >= 0) {
 		    			parseRays(current);
+		    			rayResponse = true;
 		    		}
 		    		else if (current.indexOf("TELL STOPPED 0.00") >= 0) {
 		    			stopped = true;
