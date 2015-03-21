@@ -20,7 +20,7 @@ class Foo {
 					eventStrings[i] = events.eventAt(i);
 				}
 				EventHandler eh = new EventHandler(eventStrings);
-
+				q.walk(30);
 				eh = null;
 			}
 		}	 
@@ -39,7 +39,7 @@ class Foo {
 
     class EventHandler {
 		double[] objectDistance = new double[3];
-	    private Events events;
+		Boolean stopped = false;
 
 		public EventHandler(String[] events) {
 			try {
@@ -49,7 +49,13 @@ class Foo {
 		    		System.out.println(current);
 		    		if (current.indexOf("rays") >= 0) {
 		    			objectDistance = parseRays(current);
-		    		}	
+		    		}
+		    		else if (current.indexOf("STOPPED") >= 0) {
+		    			stopped = true;
+		    		}
+		    		else if (current.indexOf("foo") >= 0) {
+		    			//do something
+		    		}
 		    	}
 		    }
 		    catch (Exception e) {
