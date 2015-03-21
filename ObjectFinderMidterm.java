@@ -14,7 +14,7 @@ class ObjectFinderMidterm extends Quagent {
     private Events events;
 	public static int DIST = 500;
 	private static int CORNER_DISTANCE = 20;
-	private static int DISTANCE_STRAIGHT_TO_WALL = 26;
+	private static int DISTANCE_STRAIGHT_TO_WALL = 80;
 	private int turnAngle = 0;
 	private Boolean corner = false;
 	private int numOfObjects = 8;
@@ -44,16 +44,20 @@ class ObjectFinderMidterm extends Quagent {
 					
 					//Shoot out rays
 					this.rays(4);
-					// this.pickup("tofu");
+					
 					//Shoot out a radius
 					// this.radius(60);
-					handleEvents(this.events());
+					
 					//Handle Stopped
 					//handleStopped(this.events());
 					
 					//Handle Radius
 					// handleRadius(this.events());
 					
+					//Handle Rays
+					// handleRays(this.events());
+					this.pickup("tofu");
+					handleEvents(this.events());
 					//Give the engine time to think
 					Thread.currentThread().sleep(200);
 				}
@@ -77,24 +81,115 @@ class ObjectFinderMidterm extends Quagent {
 	 * of the function of the state.	
 	*/
 	
-	public void handleEvents(Events events)	throws Exception {
+    public void handleEvents(Events events) throws Exception {
 		for (int ix = 0; ix < events.size(); ix++) {
-			String eventString = events.eventAt(ix);
-			if (eventString.indexOf("rays") >= 0) {
-				handleRays(eventString);
+			String e = events.eventAt(ix);
+			if (e.indexOf("rays") >= 0) {
+				handleRays(e);
+			} else if (e.indexOf("OK  (do pickup tofu)") >= 0) {
+				System.out.println("Yummy Yummy in my tummy!!");
+				objectsFound++;
 			}
 		}
-	}
+    }
+	//Public function to handle the stopped event
+    public void handleStopped(Events events) throws Exception {
+	
+		// get the individual events from the event object
+		for (int ix = 0; ix < events.size(); ix++) {
+			
+			//Events object
+			String e = events.eventAt(ix);
+		
+			//Once a stopped event is detected
+			if (e.indexOf("STOPPED") >= 0) {
+				if(direction){
+					
+					//Turn 90
+					this.turn(90);
+				
+					//Walk a small distance
+					this.walk(50);
+
+					//Sleep to let the quagent walk
+					Thread.currentThread().sleep(800);
+					
+					//Turn another 90
+					this.turn(90);
+					
+					//Set direction to false
+					direction = false;
+					
+				}
+				else{
+				
+					//Turn 90
+					this.turn(90);
+				
+					//Walk a small distance
+					this.walk(50);
+					
+					//Sleep to let the quagent walk
+					Thread.currentThread().sleep(800);
+					
+					//Turn another 90
+					this.turn(90);
+					
+					//Set direction to true
+					direction = true;
+				
+				}
+			}
+		}
+    }
+	
+	//Public function to handle the stopped event
+    public void handleRadius(Events events) throws Exception {
+	
+		// get the individual events from the event object
+		for (int ix = 0; ix < events.size(); ix++) {
+			
+			//Events object
+			String e = events.eventAt(ix);
+		
+			//Once a stopped event is detected
+			if (e.indexOf("radius") >= 0) {
+				
+				String[] tokens = e.split("[()\\s]+");
+				
+				int numOfObjects = Integer.parseInt(tokens[4]);
+				
+				if (numOfObjects > 0){
+				
+					this.stand();
+				
+					//Pick up the object
+					this.pickup("tofu");
+					
+					//Pause the quagent
+					Thread.currentThread().sleep(500);
+					
+					//Add one to objects picked up
+					objectsFound++;
+					
+					System.out.println("Object " + objectsFound + " found!");
+				
+				}
+				
+			}
+		}
+    }
 	
 	//Public function to handle the rays events
-	public void handleRays(String eventString) throws Exception {
+	public void handleRays(String e) throws Exception {
 		
 		//Variables to store the distances
 		double distanceStraight = 0.0;
 		double distanceRight = 0.0;
 		double distanceLeft = 0.0;
+	
 		//Split message up into tokens
-		String[] tokens = eventString.split("[()\\s]+");
+		String[] tokens = e.split("[()\\s]+");
 
 		//Get distance straight ahead
 		double xstraight = Double.parseDouble(tokens[6]);
@@ -126,6 +221,7 @@ class ObjectFinderMidterm extends Quagent {
 				
 					//Turn 90 degrees and continue walking
 					this.turn(90);
+					this.stand();
 					
 					//Add 1 to corner variable
 					corner = true;
@@ -135,9 +231,11 @@ class ObjectFinderMidterm extends Quagent {
 				
 					//Continue walking in new direction
 					this.turn(90);
+					this.stand();
 					this.walk(10);
 					Thread.currentThread().sleep(800);
 					this.turn(90);
+					this.stand();
 					
 					//Reset corner to zero
 					corner = false;
@@ -150,6 +248,7 @@ class ObjectFinderMidterm extends Quagent {
 				
 					//Turn 90 degrees and continue walking
 					this.turn(-90);
+					this.stand();
 					
 					//Add 1 to corner variable
 					corner = true;
@@ -159,9 +258,11 @@ class ObjectFinderMidterm extends Quagent {
 				
 					//Continue walking in new direction
 					this.turn(-90);
+					this.stand();
 					this.walk(10);
 					Thread.currentThread().sleep(800);
 					this.turn(-90);
+					this.stand();
 					
 					//Reset corner to zero
 					corner = false;
@@ -209,7 +310,39 @@ class ObjectFinderMidterm extends Quagent {
 			}
 		}
 	}
-
+	
+	private void findAngle(double x, double y){
+		
+		Double angle = 0.0;
+		
+		if (turnAngle == 0){
+		
+			//Calculate the angle 
+			angle = Math.toDegrees(Math.atan2(y,x));
+			
+			turnAngle = angle.intValue();
+			
+			System.out.println("Angle: " + turnAngle);
+		
+		}
+	}
+	
+	public double findDistance (double x, double y){
+		return Math.sqrt(x*x + y*y);
+	}
+	
+	
+	//Private function to turn
+	private void turn() throws Exception {
+					
+		//Local variable for turn radius
+		int turn = (int)(Math.random()*180.0 - 90.0);
+			
+		//Turn
+		this.turn(turn);
+		
+	}
+	
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
 		
