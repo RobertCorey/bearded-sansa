@@ -1,41 +1,27 @@
 import java.util.*;
+import java.lang.Math.*;
 
-class Foo {
+class Help extends Quagent {
+	
+	//Private Global variables
     private Quagent q;
     private Events events;
-
+	
     public static void main(String[] args) throws Exception {
-		Foo rw = new Foo();
-		rw.run();
+		new Help();
     }
 
-    void run() throws Exception {
+    Help () throws Exception {
+		super();
+		
 		try {
-			// connect to a new quagent
-			q = new Quagent();
-			Boolean madeContact = false;
 			while(true) {
-				events = q.events();
-				q.rays(4);
-				q.pickup("tofu");
-				String[] eventStrings = new String[events.size()];
-				for (int i = 0; i < events.size(); i++) {
-					eventStrings[i] = events.eventAt(i);
-				}
-				EventHandler eh = new EventHandler(eventStrings);
-				if (!madeContact) {
-					madeContact = noContactStrategy(eh);
-				}
-				eh = null;
-				Thread.currentThread().sleep(200);
+				events = this.events();
 			}
 		}	 
 		catch (QDiedException e) { // the quagent died -- catch that exception
 			System.out.println("bot died!");
-			q.close();
-			
-			// since our bot died try to run another one
-			run();
+			this.close();
 		}
 		catch (Exception e) { // something else went wrong???
 			System.out.println("system failure: "+e);
@@ -43,15 +29,26 @@ class Foo {
 		}
     }
 
-    public Boolean noContactStrategy(EventHandler eh) {
-		if (!eh.stopped) {
-			q.walk(30);
-		} else {
-			q.turn(90);
-			return true;
-		}
-		return false;
+	/*Private functions for states and other functions
+	 * Each case has their own private function to take care
+	 * of the function of the state.	
+	*/
+	//Private function for death of quagent once all objects are found
+	private void die() throws Exception {
+		
+		//Kill the quagent
+		this.close();
+	} 
+	public void convertEvents(Events events) {
+		
 	}
+	//Function to print out events (for testing)
+    public void printEvents(Events events) {
+		System.out.println("List of Events:");
+		for (int ix = 0; ix < events.size(); ix++) {
+			System.out.println(events.eventAt(ix));
+		}
+    }
 
     class EventHandler {
 		double[] objectDistance = new double[3];
@@ -107,4 +104,3 @@ class Foo {
 		}
 	}
 }
-
