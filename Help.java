@@ -33,26 +33,13 @@ class Help extends Quagent {
 					this.pickup("tofu");
 					this.rays(4);
 				}
-				//turn left sometimes
-				if (stage == "wallhugger") {
-					if (oldEh != null) {
-						System.out.println(eh.dLeft);
-						System.out.println(oldEh.dLeft);
-						System.out.println("\n\n");
-						double diff = Math.abs(eh.dLeft - oldEh.dLeft);
-						if (diff > 200) {
-							this.turn(90);
-							stage = "walk";
-						}
-					}
-				}
 				//execute chosen strategy
 				switch (stage) {
 					case "wallhugger":
 						wallhugger(eh);
 						break;
-					case "walk":
-						this.checkItOut(eh);
+					case "search":
+						search(eh);
 						break;
 				}
 				oldEh = eh;
@@ -86,12 +73,8 @@ class Help extends Quagent {
 		}
 	}
 
-	private void checkItOut(EventHandler eh) throws Exception {
-		if (eh.stopped) {
-			this.turn(180);
-		} else {
-			this.walk(30);
-		}
+	private void search (EventHandler eh) throws Exception {
+		//search goes here
 	}
 
 	//Private function for death of quagent once all objects are found
