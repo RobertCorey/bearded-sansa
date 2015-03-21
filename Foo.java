@@ -15,7 +15,6 @@ class Foo {
 			q = new Quagent();
 			while(true) {
 				events = q.events();
-				//Defuck uneeded event abstraction into string array
 				String eventStrings = 
 				EventHandler eh = new EventHandler(events);
 
