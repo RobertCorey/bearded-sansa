@@ -56,7 +56,7 @@ class Help extends Quagent {
 	 * of the function of the state.	
 	*/
 	private void wallhugger(EventHandler eh) throws Exception {
-		if (eh.objectDistance[2] > 100) {
+		if (eh.dRight > 100) {
 			this.turn(-90);
 			this.walk(30);
 		}
@@ -76,7 +76,7 @@ class Help extends Quagent {
 	} 
 
     class EventHandler {
-		double[] objectDistance = {-1, -1, -1};
+		double dStraight, dLeft, dRight, dBehind, dArea;
 		Boolean stopped = false;
 
 		public EventHandler(String[] events) {
@@ -86,7 +86,7 @@ class Help extends Quagent {
 					String current = events[i];
 		    		System.out.println(current);
 		    		if (current.indexOf("rays") >= 0) {
-		    			objectDistance = parseRays(current);
+		    			parseRays(current);
 		    		}
 		    		else if (current.indexOf("TELL STOPPED 0.00") >= 0) {
 		    			stopped = true;
@@ -101,31 +101,26 @@ class Help extends Quagent {
 		    }
 		}
 
-	    public double[] parseRays(String rayResponse) throws Exception {
-			//Variables to store the distances
-			double distanceStraight = 0.0;
-			double distanceRight = 0.0;
-			double distanceLeft = 0.0;
+	    public void parseRays(String rayResponse) throws Exception {
 			//Split message up into tokens
 			String[] tokens = rayResponse.split("[()\\s]+");
 			//Get distance straight ahead
 			double xstraight = Double.parseDouble(tokens[6]);
 			double ystraight = Double.parseDouble(tokens[7]);
-			distanceStraight = Math.sqrt(xstraight*xstraight + ystraight*ystraight);
+			this.dStraight = Math.sqrt(xstraight*xstraight + ystraight*ystraight);
+			// Get distance behind
+			double xbehind = Double.parseDouble(tokens[17]);
+			double ybehind = Double.parseDouble(tokens[18]);
+			this.dBehind = Math.sqrt(xbehind*xbehind + ybehind*ybehind);
 			//Get distance to the left
 			double xleft = Double.parseDouble(tokens[11]);
 			double yleft = Double.parseDouble(tokens[12]);
-			distanceLeft = Math.sqrt(xleft*xleft + yleft*yleft);
+			this.dLeft = Math.sqrt(xleft*xleft + yleft*yleft);
 			//Get distance to the right
 			double xright = Double.parseDouble(tokens[21]);
 			double yright = Double.parseDouble(tokens[22]);
-			distanceRight = Math.sqrt(xright*xright + yright*yright);
-			//For distance testing:
-			System.out.println("Distance Straight: " + distanceStraight);
-			System.out.println("Distance Right: " + distanceRight);
-			System.out.println("Distance Left: " + distanceLeft + "\n\n");
-			double[] distanceArr = {distanceStraight, distanceLeft, distanceRight};
-			return distanceArr;
+			this.dRight = Math.sqrt(xright*xright + yright*yright);
+			this.dArea = this.dStraight + this.dLeft + this.dRight + this.dBehind;
 		}
 	}
 }
