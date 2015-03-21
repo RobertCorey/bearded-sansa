@@ -15,8 +15,11 @@ class Foo {
 			q = new Quagent();
 			while(true) {
 				events = q.events();
-				String eventStrings = 
-				EventHandler eh = new EventHandler(events);
+				String[] eventStrings = new String[events.size()];
+				for (int i = 0; i < events.size(); i++) {
+					eventStrings[i] = events.eventAt(i);
+				}
+				EventHandler eh = new EventHandler(eventStrings);
 
 				eh = null;
 			}
@@ -36,16 +39,22 @@ class Foo {
 
     class EventHandler {
 		double[] objectDistance = new double[3];
+	    private Events events;
 
-		public EventHandler(Event events) {
-	    	// printEvents(events);
-	    	for (int i = 0; i < events.size(); i++) {
-	    		String current = events.eventAt(i);
-	    		System.out.println(current);
-	    		if (current.indexOf("rays") >= 0) {
-	    			objectDistance = parseRays(current);
-	    		}
-	    	}
+		public EventHandler(String[] events) {
+			try {
+		    	// printEvents(events);
+		    	for (int i = 0; i < events.length; i++) {
+					String current = events[i];
+		    		System.out.println(current);
+		    		if (current.indexOf("rays") >= 0) {
+		    			objectDistance = parseRays(current);
+		    		}	
+		    	}
+		    }
+		    catch (Exception e) {
+		    	System.out.println("thanks for holding my hand java");
+		    }
 		}
 
 	    public double[] parseRays(String rayResponse) throws Exception {

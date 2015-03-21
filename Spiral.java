@@ -23,36 +23,7 @@ class Spiral {
 
 			while(true) {
 				events = q.events();
-				for (int ix = 0; ix < events.size(); ix++) {
-					String e = events.eventAt(ix);
-					if (e.indexOf("STOPPED") >= 0) {
-						al = new ArrayList<String>();
-						al.add("w");
-						al.add("w");
-						al.add("w");
-						al.add("t");
-					}
-				}
-				// if (al.size() > 9) {
-					// ArrayList<String> al = new ArrayList<String>();
-					// al.add("w");
-					// al.add("w");
-					// al.add("w");
-					// al.add("t");
-				// }
-				if (tick == al.size()) {
-					tick = 0;
-				}
-				if (al.get(tick) == "w") {
-					q.walk(30);
-				} else {
-					q.turn(90);
-					al.add("w");
-				}
-				q.pickup("tofu");
-				System.out.println(al);
-				printEvents(events);
-				tick += 1;
+
 			}
 		}	 
 		catch (QDiedException e) { // the quagent died -- catch that exception
@@ -66,6 +37,16 @@ class Spiral {
 			System.out.println("system failure: "+e);
 			System.exit(0);
 		}
+    }
+
+    public void handleEvents(Events events) {
+    	printEvents(events);
+    	for (int i = 0; i < events.size(); i++) {
+    		String current = events.eventAt(i);
+    		if (current.indexOf("rays") >= 0) {
+    				
+    		}
+    	}
     }
 
     public void printEvents(Events events) {
@@ -94,5 +75,4 @@ class Spiral {
 		return double distanceArr = {distanceStraight, distanceLeft, distanceRight};
 	}
 }
-
 
