@@ -15,26 +15,24 @@ class Help extends Quagent {
 		super();
 		String stage = "wallhugger";
 		int ticks = 0;
-		
+
 		try {
 			while(true) {
 				ticks += 1;
+				//get events and convert to eventHandler object
 				events = this.events();
-				//limit exspensive operations
-				if (ticks % 4 == 0) {
-					this.pickup("tofu");
-					this.rays(4);
-					// continue;
-				}
-
 				String[] eventStrings = new String[events.size()];
 				for (int i = 0; i < events.size(); i++) {
 					eventStrings[i] = events.eventAt(i);
 				}
 				EventHandler eh = new EventHandler(eventStrings);
-				double area = 0;
-				double arr[] = eh.objectDistance;
 
+				//limit operations that clog queue
+				if (ticks % 4 == 0) {
+					this.pickup("tofu");
+					this.rays(4);
+				}
+				//execute chosen strategy
 				switch (stage) {
 					case "wallhugger":
 						wallhugger(eh);
