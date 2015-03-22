@@ -6,7 +6,7 @@ class Help extends Quagent {
 	//Private Global variables
     private Quagent q;
     private Events events;
-	
+	private int ticks = 0;
     public static void main(String[] args) throws Exception {
 		new Help();
     }
@@ -14,7 +14,6 @@ class Help extends Quagent {
     Help () throws Exception {
 		super();
 		String stage = "wallhugger";
-		int ticks = 0;
 		EventHandler oldEh = null;
 
 		try {
@@ -36,12 +35,16 @@ class Help extends Quagent {
 				//execute chosen strategy
 				switch (stage) {
 					case "wallhugger":
-						wallhugger(eh);
+						stage = wallhugger(eh);
 						break;
-					case "search":
-						search(eh);
+					case "dartout":
+						stage = dartout(eh);
+						break;
+					case "dartin":
+						stage = dartin(eh);
 						break;
 				}
+				System.out.println(stage);
 				oldEh = eh;
 				// Thread.currentThread().sleep(200);
 			}
@@ -60,22 +63,54 @@ class Help extends Quagent {
 	 * Each case has their own private function to take care
 	 * of the function of the state.	
 	*/
-	private void wallhugger(EventHandler eh) throws Exception {
+	private String wallhugger(EventHandler eh) throws Exception {
 		if (eh.dRight > 100) {
 			this.turn(-90);
 			this.walk(30);
+			Thread.currentThread().sleep(500);
+			return "wallhugger";
 		}
 		if (eh.stopped == true) {
 			this.turn(90);
 			this.walk(30);
+			Thread.currentThread().sleep(500);
+			return "wallhugger";
+		} 
+		if (ticks % 20 == 0) {
+			this.walk(30);
+			this.turn(90);
+			Thread.currentThread().sleep(500);
+			return "dartout";	
+		}
+		else {
+			this.walk(30);
+			return "wallhugger";
+		}
+	}
+	private String dartout(EventHandler eh) throws Exception {
+		if (eh.stopped) {
+			this.turn(180);
+			Thread.currentThread().sleep(500);
+			return "dartin";
 		} else {
 			this.walk(30);
+			Thread.currentThread().sleep(500);
+			return "dartout";
 		}
 	}
 
-	private void search (EventHandler eh) throws Exception {
-		//search goes here
+	private String dartin(EventHandler eh) throws Exception {
+		if (eh.stopped) {
+			this.turn(90);
+			Thread.currentThread().sleep(500);
+			return "wallhugger";
+		} else {
+			this.walk(30);
+			Thread.currentThread().sleep(500);
+			return "dartin";
+		}
 	}
+
 
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
