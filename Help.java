@@ -67,19 +67,19 @@ class Help extends Quagent {
 		if (eh.dRight > 100) {
 			this.turn(-90);
 			this.walk(30);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "wallhugger";
 		}
 		if (eh.stopped == true) {
 			this.turn(90);
 			this.walk(30);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "wallhugger";
 		} 
 		if (ticks % 20 == 0) {
 			this.walk(30);
 			this.turn(90);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "dartout";	
 		}
 		else {
@@ -90,11 +90,11 @@ class Help extends Quagent {
 	private String dartout(EventHandler eh) throws Exception {
 		if (eh.stopped) {
 			this.turn(180);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "dartin";
 		} else {
 			this.walk(30);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "dartout";
 		}
 	}
@@ -102,11 +102,11 @@ class Help extends Quagent {
 	private String dartin(EventHandler eh) throws Exception {
 		if (eh.stopped) {
 			this.turn(90);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "wallhugger";
 		} else {
 			this.walk(30);
-			Thread.currentThread().sleep(500);
+			Thread.currentThread().sleep(200);
 			return "dartin";
 		}
 	}
