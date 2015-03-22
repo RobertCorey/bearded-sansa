@@ -1,17 +1,17 @@
 import java.util.*;
 import java.lang.Math.*;
 
-class ScrimshawBot extends Quagent {
+class ScrimShawBot extends Quagent {
 	
 	//Private Global variables
     private Quagent q;
     private Events events;
 	private int ticks = 0;
     public static void main(String[] args) throws Exception {
-		new ScrimshawBot();
+		new ScrimShawBot();
     }
 
-    ScrimshawBot () throws Exception {
+    ScrimShawBot () throws Exception {
 		super();
 		String stage = "wallhugger";
 		EventHandler oldEh = null;
@@ -149,23 +149,19 @@ class ScrimshawBot extends Quagent {
 	    public void parseRays(String rayResponse) throws Exception {
 			//Split message up into tokens
 			String[] tokens = rayResponse.split("[()\\s]+");
-			//Get distance straight ahead
-			double xstraight = Double.parseDouble(tokens[6]);
-			double ystraight = Double.parseDouble(tokens[7]);
-			this.dStraight = Math.sqrt(xstraight*xstraight + ystraight*ystraight);
-			// Get distance behind
-			double xbehind = Double.parseDouble(tokens[17]);
-			double ybehind = Double.parseDouble(tokens[18]);
-			this.dBehind = Math.sqrt(xbehind*xbehind + ybehind*ybehind);
-			//Get distance to the left
-			double xleft = Double.parseDouble(tokens[11]);
-			double yleft = Double.parseDouble(tokens[12]);
-			this.dLeft = Math.sqrt(xleft*xleft + yleft*yleft);
-			//Get distance to the right
-			double xright = Double.parseDouble(tokens[21]);
-			double yright = Double.parseDouble(tokens[22]);
-			this.dRight = Math.sqrt(xright*xright + yright*yright);
+
+			this.dStraight = getRayDistance(tokens[6], tokens[7]);
+			this.dLeft = getRayDistance(tokens[11], tokens[12]);
+			this.dBehind = getRayDistance(tokens[17], tokens[18]);
+			this.dRight = getRayDistance(tokens[21], tokens[22]);
+
 			this.dArea = this.dStraight + this.dLeft + this.dRight + this.dBehind;
+		}
+
+		private double getRayDistance(String x, String y) throws Exception {
+			double xstraight = Double.parseDouble(x);
+			double ystraight = Double.parseDouble(y);
+			return Math.sqrt(xstraight*xstraight + ystraight*ystraight);
 		}
 	}
 }
