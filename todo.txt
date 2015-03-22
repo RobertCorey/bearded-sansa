@@ -1,0 +1,1 @@
+1. Save all of the previous ray states, maybe create picture of where we are by how much we have traveled?

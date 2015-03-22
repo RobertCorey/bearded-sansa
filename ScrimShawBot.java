@@ -6,16 +6,20 @@ class ScrimShawBot extends Quagent {
 	//Private Global variables
     private Quagent q;
     private Events events;
+    //event trackers
 	private int ticks = 0;
+	private int wallhuggerState = 0;
+	private int consecutiveStops = 0;
+
     public static void main(String[] args) throws Exception {
 		new ScrimShawBot();
     }
 
     ScrimShawBot () throws Exception {
 		super();
-		String stage = "wallhugger";
+		String stage = "grabperimeter";
 		EventHandler oldEh = null;
-
+		
 		try {
 			while(true) {
 				ticks += 1;
@@ -32,8 +36,12 @@ class ScrimShawBot extends Quagent {
 					this.pickup("tofu");
 					this.rays(4);
 				}
+
 				//execute chosen strategy
 				switch (stage) {
+					case "grabperimeter":
+						stage = grabperimeter(eh);
+						break;
 					case "wallhugger":
 						stage = wallhugger(eh);
 						break;
@@ -46,7 +54,7 @@ class ScrimShawBot extends Quagent {
 				}
 				System.out.println(stage);
 				oldEh = eh;
-				// Thread.currentThread().sleep(200);
+				Thread.currentThread().sleep(200);
 			}
 		}	 
 		catch (QDiedException e) { // the quagent died -- catch that exception
@@ -64,7 +72,8 @@ class ScrimShawBot extends Quagent {
 	 * of the function of the state.	
 	*/
 	private String wallhugger(EventHandler eh) throws Exception {
-		if (eh.dRight > 100) {
+		wallhuggerState += 1;
+		if (eh.dRight > 200) {
 			this.turn(-90);
 			this.walk(30);
 			Thread.currentThread().sleep(200);
@@ -76,9 +85,11 @@ class ScrimShawBot extends Quagent {
 			Thread.currentThread().sleep(200);
 			return "wallhugger";
 		} 
-		if (ticks % 20 == 0) {
+		if (wallhuggerState >= 10 && eh.dStraight >= 300) {
+			System.out.println("DARTY @" + eh.dStraight);
 			this.walk(30);
 			this.turn(90);
+			wallhuggerState = 0;
 			Thread.currentThread().sleep(200);
 			return "dartout";	
 		}
@@ -111,6 +122,22 @@ class ScrimShawBot extends Quagent {
 		}
 	}
 
+	private String grabperimeter(EventHandler eh) throws Exception {
+		this.walk(30);
+		this.turn(90);
+		this.walk(30);
+		this.turn(-90);
+		if (eh.stopped) {
+			consecutiveStops += 1;
+			System.out.println(consecutiveStops);
+		} else {
+			consecutiveStops = 0;
+		}
+		if (consecutiveStops >= 10) {
+			return "wallhugger";
+		}
+		return "grabperimeter";
+	}
 
 	//Private function for death of quagent once all objects are found
 	private void die() throws Exception {
@@ -118,7 +145,7 @@ class ScrimShawBot extends Quagent {
 		//Kill the quagent
 		this.close();
 	} 
-
+	//Abstraction of event handler object
     class EventHandler {
 		double dStraight, dLeft, dRight, dBehind, dArea;
 		Boolean stopped = false;
@@ -145,7 +172,7 @@ class ScrimShawBot extends Quagent {
 		    	System.out.println("foo");
 		    }
 		}
-
+		//cherry pick ray coordinates from string
 	    public void parseRays(String rayResponse) throws Exception {
 			//Split message up into tokens
 			String[] tokens = rayResponse.split("[()\\s]+");
@@ -157,7 +184,7 @@ class ScrimShawBot extends Quagent {
 
 			this.dArea = this.dStraight + this.dLeft + this.dRight + this.dBehind;
 		}
-
+		//takes x y in string returns distance
 		private double getRayDistance(String x, String y) throws Exception {
 			double xstraight = Double.parseDouble(x);
 			double ystraight = Double.parseDouble(y);
