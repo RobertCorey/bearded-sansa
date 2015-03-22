@@ -73,7 +73,7 @@ class ScrimShawBot extends Quagent {
 	*/
 	private String wallhugger(EventHandler eh) throws Exception {
 		wallhuggerState += 1;
-		if (eh.dRight > 200) {
+		if (eh.dRight > 100) {
 			this.turn(-90);
 			this.walk(30);
 			Thread.currentThread().sleep(200);
