@@ -1,0 +1,19 @@
+{
+  "name": "midterm",
+  "version": "1.0.0",
+  "description": "This directory contains example Quagent files and the Quagent runtime\r library 'quagent.jar'.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobertCorey/bearded-sansa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobertCorey/bearded-sansa/issues"
+  },
+  "homepage": "https://github.com/RobertCorey/bearded-sansa"
+}
