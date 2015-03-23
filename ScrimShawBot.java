@@ -85,7 +85,7 @@ class ScrimShawBot extends Quagent {
 			Thread.currentThread().sleep(200);
 			return "wallhugger";
 		} 
-		if (wallhuggerState >= 10 && eh.dStraight >= 300) {
+		if (wallhuggerState >= 5 && eh.dStraight >= 300) {
 			System.out.println("DARTY @" + eh.dStraight);
 			this.walk(30);
 			this.turn(90);
@@ -127,9 +127,9 @@ class ScrimShawBot extends Quagent {
 		this.turn(90);
 		this.walk(30);
 		this.turn(-90);
+		Thread.currentThread().sleep(200);
 		if (eh.stopped) {
 			consecutiveStops += 1;
-			System.out.println(consecutiveStops);
 		} else {
 			consecutiveStops = 0;
 		}
@@ -163,8 +163,7 @@ class ScrimShawBot extends Quagent {
 		    		else if (current.indexOf("TELL STOPPED 0.00") >= 0) {
 		    			stopped = true;
 		    		}
-		    		else if (current.indexOf("foo") >= 0) {
-		    			//do something
+		    		else if ((current.indexOf("OK  (do pickup tofu)") >= 0) {
 		    		}
 		    	}
 		    }
