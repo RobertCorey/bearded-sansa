@@ -10,6 +10,8 @@ class ScrimShawBot extends Quagent {
 	private int ticks = 0;
 	private int wallhuggerState = 0;
 	private int consecutiveStops = 0;
+	private int tofuFound = 0;
+	private int MAX_TOFU_THRESHOLD = 8;
 
     public static void main(String[] args) throws Exception {
 		new ScrimShawBot();
@@ -25,6 +27,9 @@ class ScrimShawBot extends Quagent {
 				ticks += 1;
 				//get events and convert to eventHandler object
 				events = this.events();
+				if (tofuFound == MAX_TOFU_THRESHOLD) {
+					stage = "victory";
+				}
 				String[] eventStrings = new String[events.size()];
 				for (int i = 0; i < events.size(); i++) {
 					eventStrings[i] = events.eventAt(i);
@@ -50,6 +55,11 @@ class ScrimShawBot extends Quagent {
 						break;
 					case "dartin":
 						stage = dartin(eh);
+						break;
+					case "victory":
+						System.out.println("ALL TOFU FOUND!");
+						this.turn( (int) (Math.random() * 360));
+						this.walk( (int) (Math.random() * 100));
 						break;
 				}
 				System.out.println(stage);
@@ -163,7 +173,8 @@ class ScrimShawBot extends Quagent {
 		    		else if (current.indexOf("TELL STOPPED 0.00") >= 0) {
 		    			stopped = true;
 		    		}
-		    		else if ((current.indexOf("OK  (do pickup tofu)") >= 0) {
+		    		else if (current.indexOf("OK  (do pickup tofu)") >= 0) {
+		    			tofuFound += 1;
 		    		}
 		    	}
 		    }
